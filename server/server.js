@@ -12,7 +12,10 @@ const PORT = process.env.PORT || 3000;
 connectDatabase();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_PORT,
+  credentials: true
+}));
 app.use(express.json());
 
 // Маршрути
