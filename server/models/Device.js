@@ -10,17 +10,17 @@ const DeviceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number],
-      required: true
-    }
-  },
+  // location: {
+  //   type: {
+  //     type: String,
+  //     enum: ['Point'],
+  //     default: 'Point'
+  //   },
+  //   coordinates: {
+  //     type: [Number],
+  //     required: true
+  //   }
+  // },
   status: {
     type: String,
     enum: ['online', 'offline', 'error'],
