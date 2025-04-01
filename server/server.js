@@ -2,9 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDatabase = require('./config/database');
-const { mqttClient } = require('./config/mqtt'); 
+const dashboardController = require('./controllers/dashboardController');
 const authRoutes = require('./routes/authRoutes');
 const deviceRoutes = require('./routes/deviceRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -21,6 +22,7 @@ app.use(express.json());
 // Маршрути
 app.use('/api/auth', authRoutes);
 app.use('/api/devices', deviceRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Глобальний обробник помилок
 app.use((err, req, res, next) => {

@@ -27,10 +27,12 @@ const DeviceSchema = new mongoose.Schema({
     default: 'offline'
   },
   fillLevel: {
-    type: Number,
-    min: 0,
-    max: 100,
-    default: 0
+    type: String,
+    required: true,
+    //type: Number,
+    //min: 0,
+    //max: 100,
+    //default: 0
   },
   batteryLevel: {
     type: Number,
@@ -43,24 +45,32 @@ const DeviceSchema = new mongoose.Schema({
     default: Date.now
   },
   fillLevelHistory: [{
-    level: Number,
+    level: {
+      type: String, // Store the fill level as a string
+      required: true,
+    },
     timestamp: {
-      type: Date,
-      default: Date.now
-    }
-  }]
+      type: Date, // Store the timestamp as a date
+      default: Date.now,
+    },
+  }],
 }, { 
   timestamps: true 
 });
 
 DeviceSchema.index({ location: '2dsphere' });
 
-DeviceSchema.methods.updateFillLevel = function(newLevel) {
+DeviceSchema.methods.updateFillLevelHistory = function(newLevel) {
+  // Оновлюємо поле fillLevel
   this.fillLevel = newLevel;
+
+  // Додаємо новий запис у fillLevelHistory
   this.fillLevelHistory.push({ 
-    level: newLevel, 
-    timestamp: new Date() 
+    level: String(newLevel), // Перетворюємо значення на строку
+    timestamp: new Date(), // Додаємо поточну дату
   });
+
+  // Зберігаємо зміни
   return this.save();
 };
 
