@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../redux/slices/authSlice';
+import '../index.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className='card'>
       <h2>Увійти</h2>
       <form onSubmit={handleSubmit}>
         <input 

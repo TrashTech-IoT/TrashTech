@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../redux/slices/authSlice';
+import '../index.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -20,7 +21,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className='card'>
       <h2>Реєстрація</h2>
       <form onSubmit={handleSubmit}>
         <input 
