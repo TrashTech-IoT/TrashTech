@@ -16,36 +16,38 @@ function App() {
       <Router>
         <div className="App">
           <Navbar />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route 
-              path="/" 
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/device/:id" 
-              element={
-                <PrivateRoute>
-                  <DeviceDetail />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/profile" 
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              } 
-            />
-          </Routes>
-        </div>
-      </Router>
+          <div className='content'>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route 
+                  path="/" 
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="/device/:id" 
+                  element={
+                    <PrivateRoute>
+                      <DeviceDetail />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <PrivateRoute>
+                      <Profile />
+                    </PrivateRoute>
+                  } 
+                />
+              </Routes>
+            </div>
+          </div>
+        </Router>
     </Provider>
   );
 }
