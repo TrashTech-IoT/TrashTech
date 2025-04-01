@@ -14,7 +14,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div>
+      <div className="navbar-content">
         <Link to="/">Smart Bin Моніторинг</Link>
         {isAuthenticated ? (
           <>
