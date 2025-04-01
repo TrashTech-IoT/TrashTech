@@ -1,6 +1,12 @@
 require('dotenv').config();
 const mqtt = require('mqtt');
+const { EventEmitter } = require('events'); // Import EventEmitter
 const Device = require('../models/Device');
+
+let global_message = ''; // Declare global_message
+
+// Create an EventEmitter instance
+const mqttEvents = new EventEmitter();
 
 // Конфігурація MQTT клієнта
 const mqttOptions = {
@@ -28,18 +34,19 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', async (topic, message) => {
   console.log(`📩 Отримано повідомлення з теми ${topic}: ${message.toString()}`);
-  
+  global_message = message.toString(); // Update global_message
+
+  // Emit an event with the updated global_message
+  mqttEvents.emit('messageReceived', { topic, payload: message.toString() });
   try {
-    // Парсимо ID пристрою з топіку (формат: smart-bin/{serialNumber}/...)
+    // Handle the message (existing logic)
     const topicParts = topic.split('/');
     if (topicParts.length < 3) return;
     
     const serialNumber = topicParts[1];
     const messageType = topicParts[2];
     
-    // Знаходимо пристрій за серійним номером
     const device = await Device.findOne({ serialNumber });
-    
     if (!device) {
       console.error(`❌ Пристрій з серійним номером ${serialNumber} не знайдено в базі даних`);
       return;
@@ -51,7 +58,6 @@ mqttClient.on('message', async (topic, message) => {
     switch (messageType) {
       case 'fill_level':
         const fillLevel = parseInt(message.toString(), 10);
-        
         if (!isNaN(fillLevel) && fillLevel >= 0 && fillLevel <= 100) {
           await device.updateFillLevel(fillLevel);
           console.log(`✅ Оновлено рівень заповнення для пристрою ${serialNumber}: ${fillLevel}%`);
@@ -61,19 +67,11 @@ mqttClient.on('message', async (topic, message) => {
         break;
       
       case 'detecting':
-        // Обробка повідомлення про виявлення об'єкта
         const isDetected = message.toString().toLowerCase() === 'true';
-        
-        // Можна зберігати інформацію про виявлення в базі даних або виконувати інші дії
         console.log(`📊 Пристрій ${serialNumber} ${isDetected ? 'виявив' : 'не виявив'} об'єкт в діапазоні 1м`);
-        
-        // Тут можна реалізувати додаткову логіку, якщо потрібно
-        // Наприклад, якщо об'єкт виявлено близько до заповненого смітника,
-        // можна відправити повідомлення про необхідність очищення
-        
         await device.save();
         break;
-        
+      
       default:
         console.log(`Невідомий тип повідомлення: ${messageType}`);
     }
@@ -94,7 +92,8 @@ mqttClient.on('reconnect', () => {
   console.log('🔄 Спроба перепідключення до MQTT брокера...');
 });
 
-// Експортуємо клієнт та функції
+// Export mqttClient, mqttEvents, and a getter for global_message
 module.exports = {
-  mqttClient
+  mqttClient,
+  mqttEvents, // Export the EventEmitter instance
 };
