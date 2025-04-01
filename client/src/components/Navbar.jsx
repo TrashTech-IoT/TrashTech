@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
+import '../Navbar.css'
 
 const Navbar = () => {
   const { isAuthenticated, user } = useSelector(state => state.auth);
@@ -12,7 +13,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav>
+    <nav className="navbar">
       <div>
         <Link to="/">Smart Bin Моніторинг</Link>
         {isAuthenticated ? (
