@@ -22,6 +22,9 @@ const Register = () => {
 
   return (
     <div className='card'>
+      <div className='logo' id='forn-container'>
+        <img src="/public/logo.png" alt="TrashTech Logo" />
+      </div>
       <h2>Реєстрація</h2>
       <form onSubmit={handleSubmit}>
         <input 
