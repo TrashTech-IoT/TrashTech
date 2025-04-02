@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from './redux/store';
+import { checkAuth } from './redux/slices/authSlice'; 
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
@@ -10,46 +11,56 @@ import Dashboard from './pages/Dashboard';
 import DeviceDetail from './pages/DeviceDetail';
 import Profile from './pages/Profile';
 
-function App() {
+function AppInner() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
   return (
-    <Provider store={store}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className='content'>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route 
-                  path="/" 
-                  element={
-                    <PrivateRoute>
-                      <Dashboard />
-                    </PrivateRoute>
-                  } 
-                />
-                <Route 
-                  path="/device/:id" 
-                  element={
-                    <PrivateRoute>
-                      <DeviceDetail />
-                    </PrivateRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <PrivateRoute>
-                      <Profile />
-                    </PrivateRoute>
-                  } 
-                />
-              </Routes>
-            </div>
-          </div>
-        </Router>
-    </Provider>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <div className='content'>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route 
+              path="/" 
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/device/:id" 
+              element={
+                <PrivateRoute>
+                  <DeviceDetail />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } 
+            />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Provider store={store}>
+      <AppInner />
+    </Provider>
+  );
+}

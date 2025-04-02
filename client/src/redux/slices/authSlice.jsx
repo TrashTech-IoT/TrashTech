@@ -27,13 +27,27 @@ export const register = createAsyncThunk(
   }
 );
 
+export const checkAuth = createAsyncThunk(
+  'auth/checkAuth',
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.get('/api/auth/profile');
+      return response.data.user;
+    } catch (error) {
+      console.log('checkAuth error:', error);
+      dispatch(logout());
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
     token: localStorage.getItem('token'),
     isAuthenticated: false,
-    loading: false,
+    loading: true,
     error: null
   },
   reducers: {
@@ -69,6 +83,18 @@ const authSlice = createSlice({
         state.token = action.payload.token;
       })
       .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+      })
+      .addCase(checkAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
