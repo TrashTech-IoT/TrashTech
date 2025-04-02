@@ -20,8 +20,10 @@ const Navbar = () => {
           <>
             <Link to="/">Головна</Link>
             <Link to="/profile">Профіль</Link>
-            <span>Вітаємо, {user.username}</span>
-            <button onClick={handleLogout}>Вийти</button>
+            <div className='line'>
+            <span className='welcome'>Вітаємо, {user.username}</span>
+            <button className= 'exit' onClick={handleLogout}>Вийти</button>
+            </div>
           </>
         ) : (
           <>

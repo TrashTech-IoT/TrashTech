@@ -3,10 +3,10 @@ nav {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 10px 20px;
+  padding: 10px 20px 10px 20px;
   background-color: #6059f7;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   position: fixed; /* Фіксоване позиціонування */
@@ -19,7 +19,9 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
+
 }
 
 nav a {
@@ -27,6 +29,18 @@ nav a {
   text-decoration: none;
   margin-left: 15px;
 }
+
+.line {
+  display: flex; /* Використання flexbox */
+  flex-direction: row; /* Розташування елементів в один рядок */
+  justify-content: space-between; /* Розподіл елементів по ширині */
+  align-items: center; /* Вирівнювання по вертикалі */
+  gap: 1px; /* Відступи між елементами */
+  width: 100%; /* Ширина блоку */
+    
+
+}
+
 @media (max-width: 768px) {
   nav {
     flex-direction: column; /* Вертикальне розташування */
@@ -42,6 +56,8 @@ nav a {
     align-items: flex-start;
     justify-content: center;
     gap: 5px; /* Відступи між елементами */
+    width: 80%;
+    margin: 0 auto;
   }
 
   nav a {
@@ -49,6 +65,16 @@ nav a {
     margin-bottom: 10px;
     font-size: 16px; /* Зменшення розміру шрифту */
   }
+
+  .line{
+    flex-direction: column; /* Вертикальне розташування */
+    align-items: flex;
+    justify-content: center;
+    gap: 5px; /* Відступи між елементами */
+    width: 80%;
+    margin: 0 auto;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -57,10 +83,23 @@ nav a {
   }
 
   .navbar-content {
+    width: 80%;
+    margin: 0 auto;
     gap: 8px; /* Зменшено відступи між елементами */
   }
 
   nav a {
     font-size: 14px; /* Ще менший розмір шрифту */
   }
+
+  .line{
+    flex-direction: column; /* Вертикальне розташування */
+    align-items: flex ;
+    justify-content: center;
+    gap: 5px; /* Відступи між елементами */
+    width: 80%;
+    margin: 0 auto;
+  }
 }
+
+
