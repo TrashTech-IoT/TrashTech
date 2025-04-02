@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDevices } from '../redux/slices/deviceSlice';
-import axios from '../utils/axios'; // <-- Використовуємо ваш axios-інстанс
+import axios from '../utils/axios';
 import { Link } from 'react-router-dom';
-import '../index.css'; // Імпортуємо стилі
+import '../index.css';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -15,19 +15,17 @@ const getGreeting = () => {
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { devices, loading, error } = useSelector(state => state.devices);
+  const { loading, error } = useSelector(state => state.devices);
   const user = useSelector(state => state.user);
   
-  // Історія заповнення
   const [fillHistory, setFillHistory] = useState([]);
-  // Актуальний рівень наповнення
   const [currentFillLevel, setCurrentFillLevel] = useState(null);
+  const [userDevices, setUserDevices] = useState([]);
   
   useEffect(() => {
     dispatch(fetchDevices());
   }, [dispatch]);
   
-  // Запит через axios-інстанс для історії заповнення
   useEffect(() => {
     const fetchFillHistory = async () => {
       try {
@@ -40,7 +38,6 @@ const Dashboard = () => {
     fetchFillHistory();
   }, []);
   
-  // Запит через axios-інстанс для актуального рівня наповнення
   useEffect(() => {
     const fetchCurrentFillLevel = async () => {
       try {
@@ -52,16 +49,25 @@ const Dashboard = () => {
     };
     fetchCurrentFillLevel();
     
-    // Оновлюємо кожні 30 секунд
     const interval = setInterval(fetchCurrentFillLevel, 30000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserDevices = async () => {
+      try {
+        const { data } = await axios.get('/api/users/devices-list');
+        setUserDevices(data);
+      } catch (error) {
+        console.error('Error fetching user devices:', error);
+      }
+    };
+    fetchUserDevices();
   }, []);
   
   if (loading) return <div className="loading-message">Завантаження...</div>;
   if (error) return <div className="error-message">Помилка: {error.message}</div>;
-  
-  const device = devices.length > 0 ? devices[0] : null;
-  
+    
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -69,38 +75,36 @@ const Dashboard = () => {
         <p className="dashboard-greeting">{getGreeting()}, {user?.username || 'Користувач'}!</p>
       </div>
       
-      {devices.length === 0 ? (
+      {userDevices.length === 0 ? (
         <div className="no-devices-message">
           У вас ще немає зареєстрованих пристроїв
         </div>
       ) : (
         <div className="device-cards-container">
-          <div className="device-card">
-            <h3 className="device-card-header">Рівень заповнення</h3>
-            {device ? (
-              <div 
-                className="fill-level-indicator" 
-                style={{"--fill-percent": `${device.fillLevel}%`}} 
-                data-percent={`${device.fillLevel}%`}
-              ></div>
-            ) : (
-              <div className="device-card-content">Дані відсутні</div>
-            )}
-          </div>
-          
-          <div className="device-card">
-            <h3 className="device-card-header">Підключення</h3>
-            <div className={`device-card-content ${device?.status === 'online' ? 'online' : 'offline'}`}>
-              {device ? device.status : 'Немає даних'}
+          {userDevices.map(device => (
+            <div className="device-card" key={device._id}>
+              <div className="device-info-row">
+                <div className="device-info-item">
+                  <h3 className="device-card-header">Серійний номер</h3>
+                  <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
+                    {device.serialNumber}
+                  </div>
+                </div>
+                <div className="device-info-item">
+                  <h3 className="device-card-header">Статус</h3>
+                  <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
+                    {device.status}
+                  </div>
+                </div>
+                <div className="device-info-item">
+                  <h3 className="device-card-header">Додано</h3>
+                  <div className="device-card-content">
+                    {new Date(device.createdAt).toLocaleString()}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="device-card">
-            <h3 className="device-card-header">Відкрито/Закрито</h3>
-            <div className={`device-card-content ${device?.isOpen ? 'open' : 'closed'}`}>
-              {device ? (device.isOpen ? 'Відкрито' : 'Закрито') : 'Немає даних'}
-            </div>
-          </div>
+          ))}
         </div>
       )}
       
