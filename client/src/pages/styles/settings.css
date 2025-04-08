@@ -1,0 +1,218 @@
+.settings-container {
+    width: 50%;
+    margin: 20px auto;
+    padding: 25px;
+    font-family: 'Roboto', sans-serif;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    text-align: left;
+    transition: box-shadow 0.3s ease;
+}
+
+
+.settings-container:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.settings-container h1 {
+    text-align: center;
+    color: #222;
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.settings-container section {
+    margin-bottom: 35px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.settings-container label {
+    display: block;
+    margin-bottom: 12px;
+    color: #555;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.settings-container h2 {
+    color: #444;
+    font-size: 20px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+    text-align: left; /* Заголовки секций выравниваются по левому краю */
+}
+
+.settings-container form label {
+    display: block;
+    margin-bottom: 12px;
+    color: #555;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.settings-container input[type="text"],
+.settings-container input[type="email"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+}
+
+
+.settings-container input[type="text"]:focus,
+.settings-container input[type="email"]:focus {
+    border-color: #36c3fe;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.settings-container .edit-button {
+    background-color: #6059f7;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.settings-container .edit-button:hover {
+    background-color: #6059f7;
+}
+
+
+.settings-container .save-button {
+    background-color: #36c3fe;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.settings-container .save-button:hover {
+    background-color: #0056b3;
+}
+
+.settings-container .return-button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block;
+    margin: 20px auto 0;
+    text-align: center;
+}
+
+.settings-container .return-button:hover {
+    background-color: #218838;
+}
+
+.settings-container button {
+    background-color: #36c3fe;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.settings-container button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.settings-container button:active {
+    transform: translateY(0);
+}
+
+.settings-container input[type="checkbox"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.settings-container label {
+    font-size: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-container section h2 {
+    font-size: 18px;
+    color: #333;
+}
+
+.save-return-container {
+    text-align: center; /* Центрируем кнопки */
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Расстояние между кнопками */
+}
+
+.save-button {
+    background-color: #007bff; /* Синий цвет для кнопки сохранения */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.save-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+.return-button {
+    background-color: #28a745; /* Зеленый цвет для кнопки возврата */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.return-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.return-button:active {
+    transform: translateY(0);
+}

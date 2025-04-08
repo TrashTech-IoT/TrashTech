@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import DeviceDetail from './pages/DeviceDetail';
 import Profile from './pages/Profile';
+import Settings from './pages/settings';
 
 function AppInner() {
   const dispatch = useDispatch();
@@ -50,7 +51,16 @@ function AppInner() {
                 </PrivateRoute>
               } 
             />
+            <Route 
+              path="/settings" 
+              element={
+                <PrivateRoute>
+                  <Settings />
+                </PrivateRoute>
+              } 
+            />
           </Routes>
+          
         </div>
       </div>
     </Router>

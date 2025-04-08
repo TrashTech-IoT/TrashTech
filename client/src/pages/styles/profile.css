@@ -1,0 +1,41 @@
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff; /* Темный фон */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    color: #ffffff; /* Белый текст */
+    text-align: left;
+  }
+  
+  .profile-container h1 {
+    text-align: center;
+    color: #6059f7; /* Основной акцент */
+    margin-bottom: 20px;
+  }
+  
+  .profile-container p {
+    font-size: 16px;
+    color: #6592fe; /* Вторичный акцент */
+    margin: 10px 0;
+  }
+  
+  .profile-container p span {
+    font-weight: bold;
+    color: #36c3fe; /* Яркий акцент */
+  }
+  
+  .profile-container p span.role {
+    color: #8c61ff; /* Цвет для роли */
+  }
+
+  .profile-container .settings-container-icon {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    color: black;
+  }
+
+  
