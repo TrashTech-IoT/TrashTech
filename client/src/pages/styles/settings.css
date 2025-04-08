@@ -10,7 +10,6 @@
     transition: box-shadow 0.3s ease;
 }
 
-
 .settings-container:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
@@ -45,11 +44,10 @@
     margin-bottom: 15px;
     border-bottom: 2px solid #007bff;
     padding-bottom: 8px;
-    text-align: left; /* Заголовки секций выравниваются по левому краю */
+    text-align: left;
 }
 
 .settings-container form label {
-    display: block;
     margin-bottom: 12px;
     color: #555;
     font-size: 16px;
@@ -59,7 +57,6 @@
 .settings-container input[type="text"],
 .settings-container input[type="email"] {
     width: 100%;
-    max-width: 400px;
     padding: 12px;
     margin-top: 8px;
     border: 1px solid #ccc;
@@ -67,7 +64,6 @@
     font-size: 15px;
     transition: border-color 0.3s ease;
 }
-
 
 .settings-container input[type="text"]:focus,
 .settings-container input[type="email"]:focus {
@@ -91,7 +87,6 @@
 .settings-container .edit-button:hover {
     background-color: #6059f7;
 }
-
 
 .settings-container .save-button {
     background-color: #36c3fe;
@@ -168,15 +163,15 @@
 }
 
 .save-return-container {
-    text-align: center; /* Центрируем кнопки */
+    text-align: center;
     margin-top: 20px;
     display: flex;
     justify-content: center;
-    gap: 15px; /* Расстояние между кнопками */
+    gap: 15px; 
 }
 
 .save-button {
-    background-color: #007bff; /* Синий цвет для кнопки сохранения */
+    background-color: #007bff; 
     color: #fff;
     border: none;
     padding: 12px 20px;
@@ -197,7 +192,7 @@
 }
 
 .return-button {
-    background-color: #28a745; /* Зеленый цвет для кнопки возврата */
+    background-color: #28a745;
     color: #fff;
     border: none;
     padding: 12px 20px;
