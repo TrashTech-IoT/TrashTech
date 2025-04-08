@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import axios from '../utils/axios';
 import './styles/settings.css';
 
 const Settings = () => {
@@ -16,7 +17,7 @@ const Settings = () => {
     oldPassword: '',
     newPassword: '',
   });
-  const [showPasswords, setShowPasswords] = useState(false); // State to toggle password visibility
+  const [showPasswords, setShowPasswords] = useState(false);
   const navigate = useNavigate();
 
   const handleEditToggle = () => {
@@ -52,10 +53,28 @@ const Settings = () => {
     }));
   };
 
-  const handleSavePassword = () => {
-    alert('Password changed successfully!');
-    setIsModalOpen(false);
-    setPasswordData({ oldPassword: '', newPassword: '' });
+  const handleSavePassword = async () => {
+    try {
+      const token = localStorage.getItem('token'); 
+      await axios.post(
+        '/api/users/change-password',
+        {
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Password changed successfully!');
+      setIsModalOpen(false);
+      setPasswordData({ oldPassword: '', newPassword: '' });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert('Error changing password');
+    }
   };
 
   return (
@@ -133,7 +152,7 @@ const Settings = () => {
               <label>
                 Old Password:
                 <input
-                  type={showPasswords ? 'text' : 'password'} // Toggle between 'text' and 'password'
+                  type={showPasswords ? 'text' : 'password'} 
                   name="oldPassword"
                   value={passwordData.oldPassword}
                   onChange={handlePasswordChange}
@@ -143,7 +162,7 @@ const Settings = () => {
               <label>
                 New Password:
                 <input
-                  type={showPasswords ? 'text' : 'password'} // Toggle between 'text' and 'password'
+                  type={showPasswords ? 'text' : 'password'} 
                   name="newPassword"
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
@@ -154,7 +173,7 @@ const Settings = () => {
                 <input
                   type="checkbox"
                   checked={showPasswords}
-                  onChange={() => setShowPasswords((prev) => !prev)} // Toggle visibility
+                  onChange={() => setShowPasswords((prev) => !prev)}
                 />
                 Show Passwords
               </label>
