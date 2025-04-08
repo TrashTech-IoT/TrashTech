@@ -10,7 +10,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import DeviceDetail from './pages/DeviceDetail';
 import Profile from './pages/Profile';
-import Settings from './pages/settings';
+import Settings from './pages/Settings';
 
 function AppInner() {
   const dispatch = useDispatch();
