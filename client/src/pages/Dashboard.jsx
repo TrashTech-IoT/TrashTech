@@ -84,6 +84,22 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteDevice = async (serialNumber) => {
+    try {
+      const token = localStorage.getItem('token');
+      const { data } = await axios.delete('/api/dashboard/device-delete', {
+        data: { serialNumber },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert(data.message);
+      // Видаляємо девайс із локального списку
+      setUserDevices((prev) => prev.filter((dev) => dev.serialNumber !== serialNumber));
+    } catch (error) {
+      console.error('Error deleting device:', error);
+      alert('Error deleting device');
+    }
+  };
+
   if (loading) return <div className="loading-message">Завантаження...</div>;
   if (error) return <div className="error-message">Помилка: {error.message}</div>;
 
@@ -122,6 +138,9 @@ const Dashboard = () => {
                     {new Date(device.createdAt).toLocaleString()}
                   </div>
                 </div>
+                <button onClick={() => handleDeleteDevice(device.serialNumber)}>
+                  Delete
+                </button>
               </div>
             </div>
           ))}
