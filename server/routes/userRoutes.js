@@ -3,7 +3,7 @@ const router = express.Router();
 const { authMiddleware } = require('../middleware/auth');
 const User = require('../models/User');
 const Device = require('../models/Device');
-
+const { changePassword, changeUsername } = require('../controllers/userController');
 // POST /api/users/devices - Додати пристрій до користувача
 router.post('/devices', authMiddleware, async (req, res) => {
   try {
@@ -38,5 +38,8 @@ router.get('/devices-list', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Помилка при отриманні пристроїв' });
     }
 });
+
+router.post('/change-password', changePassword);
+router.post('/change-username', changeUsername);
 
 module.exports = router;
