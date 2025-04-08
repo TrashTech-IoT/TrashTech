@@ -1,6 +1,6 @@
 const { mqttEvents } = require('../config/mqtt');
 const Device = require('../models/Device'); // Import the Device model
-
+const jwt = require('jsonwebtoken');
 // Listen for the 'messageReceived' event
 mqttEvents.on('messageReceived', async (message) => {
     console.log('📩 Нове повідомлення отримано в dashboardController:', message);
@@ -52,15 +52,24 @@ mqttEvents.on('messageReceived', async (message) => {
     }
   });
 
-// Function to create a new device
-const createDevice = async (req, res) => {
+  const createDevice = async (req, res) => {
     try {
-      const { serialNumber, owner, status, fillLevel, batteryLevel } = req.body;
+      const { serialNumber, status, fillLevel, batteryLevel } = req.body;
   
       // Validate the serial number
       if (!serialNumber) {
         return res.status(400).json({ error: 'Serial number is required' });
       }
+  
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+      if (!token) {
+        return res.status(401).json({ error: 'Authorization token is missing.' });
+      }
+  
+      // Decode the token to get the user ID
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your JWT secret
+      const userId = decoded.id; // Assuming the token payload contains `id`
   
       // Check if the device already exists
       const existingDevice = await Device.findOne({ serialNumber });
@@ -71,7 +80,7 @@ const createDevice = async (req, res) => {
       // Create a new device
       const newDevice = new Device({
         serialNumber,
-        owner, // Optional: Pass the owner ID if provided
+        owner: userId, // Set the owner to the authenticated user's ID
         status: status || 'offline', // Default to 'offline' if not provided
         fillLevel: fillLevel || 0, // Default to 0 if not provided
         batteryLevel: batteryLevel || 100, // Default to 100 if not provided
@@ -160,11 +169,80 @@ const getFillLevel = async (req, res) => {
   };
 
 
+  const getUserDevices = async (req, res) => {
+    try {
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+      if (!token) {
+        return res.status(401).json({ error: 'Authorization token is missing.' });
+      }
   
+      // Decode the token to get the user ID
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your JWT secret
+      const userId = decoded.id; // Assuming the token payload contains `id`
+  
+      // Find all devices owned by the user
+      const devices = await Device.find({ owner: userId });
+  
+      // Check if the user has any devices
+      if (devices.length === 0) {
+        return res.status(404).json({ message: 'No devices found for this user.' });
+      }
+  
+      // Return the devices
+      res.status(200).json({ devices });
+    } catch (error) {
+      console.error('❌ Error retrieving user devices:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  const deleteDevice = async (req, res) => {
+    try {
+      const { serialNumber } = req.body; // Extract serialNumber from the request body
+  
+      // Validate the serial number
+      if (!serialNumber) {
+        return res.status(400).json({ error: 'Serial number is required.' });
+      }
+  
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+      if (!token) {
+        return res.status(401).json({ error: 'Authorization token is missing.' });
+      }
+  
+      // Decode the token to get the user ID
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your JWT secret
+      const userId = decoded.id; // Assuming the token payload contains `id`
+  
+      // Find the device by serial number
+      const device = await Device.findOne({ serialNumber });
+      if (!device) {
+        return res.status(404).json({ error: `Device with serial number ${serialNumber} not found.` });
+      }
+  
+      // Check if the authenticated user is the owner of the device
+      if (device.owner.toString() !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to delete this device.' });
+      }
+  
+      // Delete the device
+      await device.deleteOne();
+  
+      res.status(200).json({ message: `Device with serial number ${serialNumber} deleted successfully.` });
+    } catch (error) {
+      console.error('❌ Error deleting device:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  };
+
   // Export the functions
   module.exports = {
     createDevice,
     getFillLevel,
     getFillLevelHistory,
     getDeviceInfo,
+    getUserDevices,
+    deleteDevice,
   };
