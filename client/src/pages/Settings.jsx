@@ -11,6 +11,12 @@ const Settings = () => {
     username: user?.username || '',
     email: user?.email || '',
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+  });
+  const [showPasswords, setShowPasswords] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
   const handleEditToggle = () => {
@@ -27,7 +33,6 @@ const Settings = () => {
 
   const handleSaveChanges = () => {
     alert('Profile changes saved successfully!');
-    // Тут можна викликати dispatch чи іншу логіку збереження
     setIsEditable(false);
   };
 
@@ -37,6 +42,20 @@ const Settings = () => {
 
   const handleSaveAndReturn = () => {
     navigate('/profile');
+  };
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSavePassword = () => {
+    alert('Password changed successfully!');
+    setIsModalOpen(false);
+    setPasswordData({ oldPassword: '', newPassword: '' });
   };
 
   return (
@@ -98,13 +117,66 @@ const Settings = () => {
       </section>
       <section>
         <h2>Security</h2>
-        <button>Change Password</button>
+        <button onClick={() => setIsModalOpen(true)}>Change Password</button>
       </section>
       <div className="save-return-container">
         <button className="save-return-button" onClick={handleSaveAndReturn}>
           Save Settings and Return to Profile
         </button>
       </div>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Change Password</h2>
+            <form>
+              <label>
+                Old Password:
+                <input
+                  type={showPasswords ? 'text' : 'password'} // Toggle between 'text' and 'password'
+                  name="oldPassword"
+                  value={passwordData.oldPassword}
+                  onChange={handlePasswordChange}
+                />
+              </label>
+              <br />
+              <label>
+                New Password:
+                <input
+                  type={showPasswords ? 'text' : 'password'} // Toggle between 'text' and 'password'
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                />
+              </label>
+              <br />
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showPasswords}
+                  onChange={() => setShowPasswords((prev) => !prev)} // Toggle visibility
+                />
+                Show Passwords
+              </label>
+              <br />
+              <button
+                type="button"
+                className="save-password-button"
+                onClick={handleSavePassword}
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                className="close-modal-button"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
