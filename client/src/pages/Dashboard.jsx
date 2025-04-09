@@ -37,6 +37,8 @@ const Dashboard = () => {
       }
     };
     fetchFillHistory();
+    const historyInterval = setInterval(fetchFillHistory, 800);
+    return () => clearInterval(historyInterval);
   }, []);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const Dashboard = () => {
     };
     fetchCurrentFillLevel();
 
-    const interval = setInterval(fetchCurrentFillLevel, 30000);
+    const interval = setInterval(fetchCurrentFillLevel, 800);
     return () => clearInterval(interval);
   }, []);
 
