@@ -20,8 +20,8 @@ const Dashboard = () => {
   const [fillHistory, setFillHistory] = useState([]);
   const [currentFillLevel, setCurrentFillLevel] = useState(null);
   const [userDevices, setUserDevices] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [newDeviceSerial, setNewDeviceSerial] = useState(''); // State for new device serial number
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [newDeviceSerial, setNewDeviceSerial] = useState('');
 
   useEffect(() => {
     dispatch(fetchDevices());
@@ -71,9 +71,12 @@ const Dashboard = () => {
       alert('Будь ласка, введіть серійний номер пристрою.');
       return;
     }
-
+  
     try {
-      const { data } = await axios.post('/api/users/devices', { deviceId: newDeviceSerial });
+      const { data } = await axios.post('/api/users/devices', {
+        serialNumber: newDeviceSerial
+      });
+  
       setUserDevices(prevDevices => [...prevDevices, data]);
       alert('Пристрій успішно додано!');
       setIsModalOpen(false);
