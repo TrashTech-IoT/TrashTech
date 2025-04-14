@@ -4,18 +4,25 @@ const { authMiddleware } = require('../middleware/auth');
 const User = require('../models/User');
 const Device = require('../models/Device');
 const { changePassword, changeUsername } = require('../controllers/userController');
+
 // POST /api/users/devices - Додати пристрій до користувача
 router.post('/devices', authMiddleware, async (req, res) => {
   try {
-    const { deviceId } = req.body;
-    if (!deviceId) {
-      return res.status(400).json({ message: 'deviceId є обов\'язковим' });
+    const { serialNumber } = req.body;
+    if (!serialNumber) {
+      return res.status(400).json({ message: "serialNumber є обов'язковим" });
     }
 
-    // Використовуємо $addToSet для уникнення дублювання
+    // Знаходимо пристрій за серійним номером
+    const foundDevice = await Device.findOne({ serialNumber });
+    if (!foundDevice) {
+      return res.status(404).json({ message: 'Пристрій не знайдено' });
+    }
+
+    // Додаємо _id пристрою до списку користувача
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      { $addToSet: { devices: deviceId } },
+      { $addToSet: { devices: foundDevice._id } },
       { new: true }
     );
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDevices } from '../redux/slices/deviceSlice';
 import axios from '../utils/axios';
-import { Link } from 'react-router-dom';
 import '../index.css';
 
 const getGreeting = () => {
@@ -17,15 +16,17 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector(state => state.devices);
   const user = useSelector(state => state.user);
-  
+
   const [fillHistory, setFillHistory] = useState([]);
   const [currentFillLevel, setCurrentFillLevel] = useState(null);
   const [userDevices, setUserDevices] = useState([]);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [newDeviceSerial, setNewDeviceSerial] = useState('');
+
   useEffect(() => {
     dispatch(fetchDevices());
   }, [dispatch]);
-  
+
   useEffect(() => {
     const fetchFillHistory = async () => {
       try {
@@ -36,8 +37,10 @@ const Dashboard = () => {
       }
     };
     fetchFillHistory();
+    const historyInterval = setInterval(fetchFillHistory, 800);
+    return () => clearInterval(historyInterval);
   }, []);
-  
+
   useEffect(() => {
     const fetchCurrentFillLevel = async () => {
       try {
@@ -48,8 +51,8 @@ const Dashboard = () => {
       }
     };
     fetchCurrentFillLevel();
-    
-    const interval = setInterval(fetchCurrentFillLevel, 30000);
+
+    const interval = setInterval(fetchCurrentFillLevel, 800);
     return () => clearInterval(interval);
   }, []);
 
@@ -64,17 +67,55 @@ const Dashboard = () => {
     };
     fetchUserDevices();
   }, []);
+
+  const handleAddDevice = async () => {
+    if (!newDeviceSerial) {
+      alert('Будь ласка, введіть серійний номер пристрою.');
+      return;
+    }
   
+    try {
+      const { data } = await axios.post('/api/users/devices', {
+        serialNumber: newDeviceSerial
+      });
+  
+      setUserDevices(prevDevices => [...prevDevices, data]);
+      alert('Пристрій успішно додано!');
+      setIsModalOpen(false);
+      setNewDeviceSerial('');
+    } catch (error) {
+      console.error('Error adding device:', error);
+      alert('Помилка при додаванні пристрою.');
+    }
+  };
+
+  const handleDeleteDevice = async (serialNumber) => {
+    try {
+      const token = localStorage.getItem('token');
+      const { data } = await axios.delete('/api/dashboard/device-delete', {
+        data: { serialNumber },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert(data.message);
+      // Видаляємо девайс із локального списку
+      setUserDevices((prev) => prev.filter((dev) => dev.serialNumber !== serialNumber));
+    } catch (error) {
+      console.error('Error deleting device:', error);
+      alert('Error deleting device');
+    }
+  };
+
   if (loading) return <div className="loading-message">Завантаження...</div>;
   if (error) return <div className="error-message">Помилка: {error.message}</div>;
-    
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1 className="dashboard-title">Дашборд</h1>
         <p className="dashboard-greeting">{getGreeting()}, {user?.username || 'Користувач'}!</p>
+        <button className="add-device-button" onClick={() => setIsModalOpen(true)}>+</button>
       </div>
-      
+
       {userDevices.length === 0 ? (
         <div className="no-devices-message">
           У вас ще немає зареєстрованих пристроїв
@@ -102,15 +143,34 @@ const Dashboard = () => {
                     {new Date(device.createdAt).toLocaleString()}
                   </div>
                 </div>
+                <button onClick={() => handleDeleteDevice(device.serialNumber)}>
+                  Delete
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
-      
+
+      {/* Модальне вікно для додавання пристрою */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Додати новий пристрій</h2>
+            <input
+              type="text"
+              placeholder="Введіть серійний номер"
+              value={newDeviceSerial}
+              onChange={(e) => setNewDeviceSerial(e.target.value)}
+            />
+            <button className="add-device-submit" onClick={handleAddDevice}>Додати</button>
+            <button className="close-modal-button" onClick={() => setIsModalOpen(false)}>Закрити</button>
+          </div>
+        </div>
+      )}
+
       {/* Контейнер для історії та актуального рівня наповнення */}
       <div className="data-sections-container">
-        {/* Блок для історії, з вертикальною прокруткою */}
         <div className="history-section">
           <h3 className="history-title">Історія рівня заповнення</h3>
           <div className="history-content">
@@ -130,8 +190,7 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-        
-        {/* Блок для актуального рівня наповнення */}
+
         <div className="current-fill-section">
           <h3 className="current-fill-title">Актуальний рівень наповнення</h3>
           <div className="current-fill-content">

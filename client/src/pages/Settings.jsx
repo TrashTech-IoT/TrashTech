@@ -32,10 +32,26 @@ const Settings = () => {
     }));
   };
 
-  const handleSaveChanges = () => {
-    alert('Profile changes saved successfully!');
-    setIsEditable(false);
+  const handleSaveChanges = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        '/api/users/change-username',
+        { newUsername: userData.username },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Profile changes saved successfully!');
+      setIsEditable(false);
+    } catch (err) {
+      console.error('Error changing username:', err);
+      alert('Error changing username');
+    }
   };
+  
 
   const handleDarkModeToggle = () => {
     setDarkMode((prev) => !prev);
