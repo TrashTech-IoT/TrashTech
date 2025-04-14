@@ -237,7 +237,47 @@ const getFillLevel = async (req, res) => {
       res.status(500).json({ error: 'Internal server error.' });
     }
   };
-
+  
+  const addDeviceConnection = async (req, res) => {
+    try {
+      const { serialNumber } = req.body; // Extract serialNumber from the request body
+  
+      // Validate the serial number
+      if (!serialNumber) {
+        return res.status(400).json({ error: 'Serial number is required.' });
+      }
+  
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+      if (!token) {
+        return res.status(401).json({ error: 'Authorization token is missing.' });
+      }
+  
+      // Decode the token to get the user ID
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your JWT secret
+      const userId = decoded.id; // Assuming the token payload contains `id`
+  
+      // Find the device by serial number
+      const device = await Device.findOne({ serialNumber });
+      if (!device) {
+        return res.status(404).json({ error: `Device with serial number ${serialNumber} not found.` });
+      }
+  
+      // Check if the device is already connected to a user
+      if (device.owner) {
+        return res.status(400).json({ error: 'Device is already connected to another user.' });
+      }
+  
+      // Add the connection by setting the owner field
+      device.owner = userId;
+      await device.save();
+  
+      res.status(200).json({ message: `Device with serial number ${serialNumber} connected successfully.` });
+    } catch (error) {
+      console.error('❌ Error adding device connection:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  };
   // Export the functions
   module.exports = {
     createDevice,
@@ -246,4 +286,5 @@ const getFillLevel = async (req, res) => {
     getDeviceInfo,
     getUserDevices,
     deleteDevice,
+    addDeviceConnection,
   };
