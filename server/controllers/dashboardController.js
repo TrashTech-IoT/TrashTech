@@ -224,15 +224,16 @@ const getFillLevel = async (req, res) => {
   
       // Check if the authenticated user is the owner of the device
       if (device.owner.toString() !== userId) {
-        return res.status(403).json({ error: 'You are not authorized to delete this device.' });
+        return res.status(403).json({ error: 'You are not authorized to remove this device connection.' });
       }
   
-      // Delete the device
-      await device.deleteOne();
+      // Remove the connection by clearing the owner field
+      device.owner = null;
+      await device.save();
   
-      res.status(200).json({ message: `Device with serial number ${serialNumber} deleted successfully.` });
+      res.status(200).json({ message: `Connection to device with serial number ${serialNumber} removed successfully.` });
     } catch (error) {
-      console.error('❌ Error deleting device:', error);
+      console.error('❌ Error removing device connection:', error);
       res.status(500).json({ error: 'Internal server error.' });
     }
   };
