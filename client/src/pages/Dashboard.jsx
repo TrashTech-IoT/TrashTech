@@ -75,9 +75,12 @@ const Dashboard = () => {
     }
   
     try {
-      const { data } = await axios.post('/api/users/devices', {
-        serialNumber: newDeviceSerial
-      });
+      const token = localStorage.getItem('token');
+      const { data } = await axios.patch(
+        '/api/dashboard/device-add',
+        { serialNumber: newDeviceSerial }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
   
       setUserDevices(prevDevices => [...prevDevices, data]);
       alert('Пристрій успішно додано!');
