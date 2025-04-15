@@ -6,7 +6,7 @@ const Device = require('../models/Device');
 // GET /api/devices - Отримати всі пристрої (тільки для авторизованих користувачів)
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const devices = await Device.find({ user: req.user.id });
+    const devices = await Device.find({  });
     res.json(devices);
   } catch (err) {
     console.error(err);

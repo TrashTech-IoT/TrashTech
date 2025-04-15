@@ -278,6 +278,59 @@ const getFillLevel = async (req, res) => {
       res.status(500).json({ error: 'Internal server error.' });
     }
   };
+
+  const createDeviceWithoutOwner = async (req, res) => {
+    try {
+      const { serialNumber } = req.body; // Extract serialNumber from the request body
+  
+      // Validate the serial number
+      if (!serialNumber) {
+        return res.status(400).json({ error: 'Serial number is required.' });
+      }
+  
+      // Check if the device already exists
+      const existingDevice = await Device.findOne({ serialNumber });
+      if (existingDevice) {
+        return res.status(400).json({ error: 'Device with this serial number already exists.' });
+      }
+  
+      // Create a new device without an owner
+      const newDevice = new Device({
+        serialNumber,
+        owner: null, // No owner assigned
+        status: 'online', // Always set to 'online'
+        fillLevel: 0, // Always set to 0
+        batteryLevel: null, // Always set to 0
+      });
+  
+      // Save the device to the database
+      await newDevice.save();
+  
+      res.status(201).json({ message: 'Device created successfully without an owner.', device: newDevice });
+    } catch (error) {
+      console.error('❌ Error creating device without owner:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  };
+
+  const getAllDevices = async (req, res) => {
+    try {
+      // Retrieve all devices from the database
+      const devices = await Device.find();
+  
+      // Check if there are any devices
+      if (devices.length === 0) {
+        return res.status(404).json({ message: 'No devices found.' });
+      }
+  
+      // Return the list of devices
+      res.status(200).json({ devices });
+    } catch (error) {
+      console.error('❌ Error retrieving all devices:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  };
+
   // Export the functions
   module.exports = {
     createDevice,
@@ -287,4 +340,6 @@ const getFillLevel = async (req, res) => {
     getUserDevices,
     deleteDevice,
     addDeviceConnection,
+    createDeviceWithoutOwner,
+    getAllDevices,
   };

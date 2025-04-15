@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { createDevice, getDeviceInfo, getFillLevelHistory, getFillLevel, getUserDevices, deleteDevice, addDeviceConnection } = require('../controllers/dashboardController'); // Import the getDeviceInfo function
+const { createDevice, getDeviceInfo, getFillLevelHistory, getFillLevel, getUserDevices, deleteDevice,
+    getAllDevices, addDeviceConnection, createDeviceWithoutOwner } = require('../controllers/dashboardController'); // Import the getDeviceInfo function
 const { authMiddleware } = require('../middleware/auth');
 
 // Route to create a new device
@@ -21,5 +22,9 @@ router.get('/devices', authMiddleware, getUserDevices);
 router.delete('/device-delete', authMiddleware, deleteDevice);
 
 router.patch('/device-add', authMiddleware, addDeviceConnection);
+
+router.post('/device-squared', authMiddleware, createDeviceWithoutOwner);
+
+router.get('/devices-all', authMiddleware, getAllDevices);
 
 module.exports = router;
