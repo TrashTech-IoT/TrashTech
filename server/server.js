@@ -7,6 +7,8 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const deviceRoutes = require('./routes/deviceRoutes');
+const startDeviceStatusChecker = require('./utils/deviceStatusChecker');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -28,12 +30,15 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Глобальний обробник помилок
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error(err); 
   res.status(500).json({
     message: 'Внутрішня помилка сервера',
     error: process.env.NODE_ENV === 'production' ? {} : err.message
   });
 });
+
+// Запуск перевірки статусу пристроїв
+startDeviceStatusChecker(); 
 
 // Запуск серверу
 app.listen(PORT, () => {
