@@ -107,4 +107,21 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// POST /api/devices/heartbeat - Активність пристрою
+router.post('/heartbeat', async (req, res) => {
+  const { serialNumber } = req.body;
+
+  if (!serialNumber) return res.status(400).json({ error: 'Serial number is required.' });
+
+  const device = await Device.findOne({ serialNumber });
+  if (!device) return res.status(404).json({ error: 'Device not found.' });
+
+  device.status = 'online';
+  device.lastActivity = new Date();
+  await device.save();
+
+  res.status(200).json({ message: 'Heartbeat received' });
+});
+
+
 module.exports = router;
