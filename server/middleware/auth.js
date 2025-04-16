@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { verifyToken } = require('../utils/jwt');
 const User = require('../models/User');
 
@@ -37,7 +38,17 @@ const adminMiddleware = (req, res, next) => {
   next();
 };
 
+function deviceAuth(req, res, next) {
+  const secret = req.headers['x-device-secret'];
+  console.log(process.env.DEVICE_SECRET);
+  if (secret !== process.env.DEVICE_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized device' });
+  }
+  next();
+}
+
 module.exports = {
   authMiddleware,
-  adminMiddleware
+  adminMiddleware,
+  deviceAuth
 };
