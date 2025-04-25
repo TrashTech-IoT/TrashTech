@@ -38,11 +38,16 @@ app.use((err, req, res, next) => {
 });
 
 // Запуск перевірки статусу пристроїв
-startDeviceStatusChecker(); 
+if (process.env.NODE_ENV !== 'test') {
+  startDeviceStatusChecker();
+}
 
 // Запуск серверу
-app.listen(PORT, () => {
-  console.log(`🚀 Сервер запущено на порту ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Сервер запущено на порту ${PORT}`);
+  });
+}
 
 module.exports = app;
