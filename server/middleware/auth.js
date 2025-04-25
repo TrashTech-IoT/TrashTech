@@ -40,7 +40,6 @@ const adminMiddleware = (req, res, next) => {
 
 function deviceAuth(req, res, next) {
   const secret = req.headers['x-device-secret'];
-  console.log(process.env.DEVICE_SECRET);
   if (secret !== process.env.DEVICE_SECRET) {
     return res.status(401).json({ error: 'Unauthorized device' });
   }

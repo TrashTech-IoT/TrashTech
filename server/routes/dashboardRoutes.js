@@ -21,9 +21,9 @@ router.get('/devices', authMiddleware, getUserDevices);
 
 router.delete('/device-delete', authMiddleware, deleteDevice);
 
-router.patch('/device-add', deviceAuth, addDeviceConnection);
+router.patch('/device-add', authMiddleware, addDeviceConnection);
 
-router.post('/device-squared', authMiddleware, createDeviceWithoutOwner);
+router.post('/device-squared', deviceAuth, createDeviceWithoutOwner);
 
 router.get('/devices-all', authMiddleware, getAllDevices);
 
