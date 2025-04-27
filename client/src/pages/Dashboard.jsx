@@ -22,15 +22,21 @@ const Dashboard = () => {
   const [userDevices, setUserDevices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [newDeviceSerial, setNewDeviceSerial] = useState('');
+  const [expandedDevice, setExpandedDevice] = useState(null);
 
   useEffect(() => {
     dispatch(fetchDevices());
   }, [dispatch]);
 
   useEffect(() => {
+    if (!expandedDevice) return;
     const fetchFillHistory = async () => {
       try {
-        const { data } = await axios.get('/api/dashboard/device/trash/fillLevelHistory');
+        const token = localStorage.getItem('token');
+        const { data } = await axios.get(
+          `/api/dashboard/device/${expandedDevice}/fillLevelHistory`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setFillHistory(data.fillLevelHistory || []);
       } catch (err) {
         console.error('Помилка при отриманні історії:', err);
@@ -39,22 +45,26 @@ const Dashboard = () => {
     fetchFillHistory();
     const historyInterval = setInterval(fetchFillHistory, 800);
     return () => clearInterval(historyInterval);
-  }, []);
+  }, [expandedDevice]);
 
   useEffect(() => {
+    if (!expandedDevice) return;
     const fetchCurrentFillLevel = async () => {
       try {
-        const { data } = await axios.get('/api/dashboard/device/trash/fillLevel');
-        setCurrentFillLevel(data.fillLevel || null);
+        const token = localStorage.getItem('token');
+        const { data } = await axios.get(
+          `/api/dashboard/device/${expandedDevice}/fillLevel`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setCurrentFillLevel(data.fillLevel ?? null);
       } catch (err) {
         console.error('Помилка при отриманні актуального рівня наповнення:', err);
       }
     };
     fetchCurrentFillLevel();
-
-    const interval = setInterval(fetchCurrentFillLevel, 800);
-    return () => clearInterval(interval);
-  }, []);
+    const levelInterval = setInterval(fetchCurrentFillLevel, 800);
+    return () => clearInterval(levelInterval);
+  }, [expandedDevice]);
 
   useEffect(() => {
     const fetchUserDevices = async () => {
@@ -125,33 +135,94 @@ const Dashboard = () => {
         </div>
       ) : (
         <div className="device-cards-container">
-          {userDevices.map(device => (
-            <div className="device-card" key={device._id}>
-              <div className="device-info-row">
-                <div className="device-info-item">
-                  <h3 className="device-card-header">Серійний номер</h3>
-                  <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
-                    {device.serialNumber}
-                  </div>
+        {userDevices.map(device => (
+          <div className="device-wrapper" key={device._id}>
+            {/* сама карточка не міняє розмір */}
+            <div
+              className="device-card"
+              onClick={() =>
+                setExpandedDevice(prev =>
+                  prev === device.serialNumber ? null : device.serialNumber
+                )
+              }
+            >
+            <div className="device-info-row">
+              <div className="device-info-item">
+                <h3 className="device-card-header">Серійний номер</h3>
+                <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
+                  {device.serialNumber}
                 </div>
-                <div className="device-info-item">
-                  <h3 className="device-card-header">Статус</h3>
-                  <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
-                    {device.status}
-                  </div>
-                </div>
-                <div className="device-info-item">
-                  <h3 className="device-card-header">Додано</h3>
-                  <div className="device-card-content">
-                    {new Date(device.createdAt).toLocaleString()}
-                  </div>
-                </div>
-                <button onClick={() => handleDeleteDevice(device.serialNumber)}>
-                  Delete
-                </button>
               </div>
+              <div className="device-info-item">
+                <h3 className="device-card-header">Статус</h3>
+                <div className={`device-card-content ${device.status === 'online' ? 'online' : 'offline'}`}>
+                  {device.status}
+                </div>
+              </div>
+              <div className="device-info-item">
+                <h3 className="device-card-header">Додано</h3>
+                <div className="device-card-content">
+                  {new Date(device.createdAt).toLocaleString()}
+                </div>
+              </div>
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteDevice(device.serialNumber);
+                }}
+              >
+                Delete
+              </button>
             </div>
-          ))}
+            </div>
+        
+            {/* блок з деталями під карточкою */}
+            {expandedDevice === device.serialNumber && (
+              <div className="data-sections-container">
+                <div className="history-section">
+                  <h3 className="history-title">Історія рівня заповнення</h3>
+                  <div className="history-content">
+                    {fillHistory.length === 0
+                      ? <div className="no-devices-message">Немає даних</div>
+                      : fillHistory.map((item,i) => (
+                          <div className="history-item" key={i}>
+                            <span className="history-timestamp">
+                              {new Date(item.timestamp).toLocaleString()}
+                            </span>
+                            <span className="history-level">{item.level}%</span>
+                          </div>
+                        ))
+                    }
+                  </div>
+                </div>
+                <div className="current-fill-section">
+                  <h3 className="current-fill-title">Актуальний рівень</h3>
+                  <div className="current-fill-content">
+                    {currentFillLevel == null
+                      ? <div className="no-devices-message">Немає даних</div>
+                      : (
+                        <div className="current-fill-display">
+                          <div
+                            className="current-fill-indicator"
+                            style={{ "--fill-percent": `${currentFillLevel}%` }}
+                          />
+                          <div className="current-fill-info">
+                            <div className="current-fill-percentage">
+                              {currentFillLevel}%
+                            </div>
+                            <div className="current-fill-timestamp">
+                              Оновлено: {new Date().toLocaleTimeString()}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}        
         </div>
       )}
 
@@ -171,52 +242,6 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-
-      {/* Контейнер для історії та актуального рівня наповнення */}
-      <div className="data-sections-container">
-        <div className="history-section">
-          <h3 className="history-title">Історія рівня заповнення</h3>
-          <div className="history-content">
-            {fillHistory.length === 0 ? (
-              <div className="no-devices-message">Немає даних про історію наповнення</div>
-            ) : (
-              fillHistory.map((item, index) => (
-                <div className="history-item" key={index}>
-                  <span className="history-timestamp">
-                    Час: {new Date(item.timestamp).toLocaleString()}
-                  </span>
-                  <span className="history-level">
-                    Рівень: {item.level}%
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className="current-fill-section">
-          <h3 className="current-fill-title">Актуальний рівень наповнення</h3>
-          <div className="current-fill-content">
-            {currentFillLevel === null ? (
-              <div className="no-devices-message">Немає даних про актуальний рівень</div>
-            ) : (
-              <div className="current-fill-display">
-                <div 
-                  className="current-fill-indicator" 
-                  style={{"--fill-percent": `${currentFillLevel}%`}}
-                  data-percent={`${currentFillLevel}%`}
-                ></div>
-                <div className="current-fill-info">
-                  <div className="current-fill-percentage">{currentFillLevel}%</div>
-                  <div className="current-fill-timestamp">
-                    Оновлено: {new Date().toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
