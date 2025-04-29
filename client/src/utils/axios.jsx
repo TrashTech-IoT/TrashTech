@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-// const baseURL = import.meta.env.PROD
-//   ? '/'                   
-//   : 'http://localhost:3000';
-
-const baseURL = '/';
+const baseURL = import.meta.env.PROD
+  ? '/'                   
+  : 'http://localhost:3000';
 
 const instance = axios.create({
   baseURL
