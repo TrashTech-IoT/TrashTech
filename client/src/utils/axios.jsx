@@ -1,8 +1,7 @@
 import axios from 'axios';
-import getBaseURL from "./getBaseURL";
 
 const instance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: '/',
 });
 
 instance.interceptors.request.use(
