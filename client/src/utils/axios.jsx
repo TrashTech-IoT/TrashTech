@@ -1,13 +1,8 @@
 import axios from 'axios';
-
-const baseURL = () => {
-  if (import.meta.env.PROD === 'production') {
-    return '/';
-  } else return 'http://localhost:3000';
-};
+import getBaseURL from "./getBaseURL";
 
 const instance = axios.create({
-  baseURL: baseURL(),
+  baseURL: getBaseURL(),
 });
 
 instance.interceptors.request.use(
