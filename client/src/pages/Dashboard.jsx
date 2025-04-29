@@ -87,7 +87,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const { data } = await axios.patch(
-        '/api/dashboard/device-add',
+        '/api/devices/device-add',
         { serialNumber: newDeviceSerial }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -105,7 +105,7 @@ const Dashboard = () => {
   const handleDeleteDevice = async (serialNumber) => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.delete('/api/dashboard/device-delete', {
+      const { data } = await axios.delete('/api/devices/device-delete', {
         data: { serialNumber },
         headers: { Authorization: `Bearer ${token}` },
       });
