@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+import path from 'path';
 const connectDatabase = require('./config/database');
 const dashboardController = require('./controllers/dashboardController');
 const authRoutes = require('./routes/authRoutes');
@@ -37,6 +38,15 @@ app.use((err, req, res, next) => {
     message: 'Внутрішня помилка сервера',
     error: process.env.NODE_ENV === 'production' ? {} : err.message
   });
+});
+
+// Віддаємо зібраний React
+const clientBuildPath = path.join(__dirname, '../client/build');
+app.use(express.static(clientBuildPath));
+
+// на всі прочі запити — index.html
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
 // Запуск перевірки статусу пристроїв
