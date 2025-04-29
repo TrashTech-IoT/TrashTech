@@ -41,7 +41,7 @@ app.use((err, req, res, next) => {
 });
 
 // Віддаємо зібраний React
-const clientBuildPath = path.join(__dirname, '../client/build');
+const clientBuildPath = path.join(__dirname, '../client/dist');
 app.use(express.static(clientBuildPath));
 
 // на всі прочі запити — index.html
