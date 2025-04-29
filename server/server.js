@@ -23,6 +23,8 @@ app.use(cors({
 app.use(express.json());
 
 // Маршрути
+// /api/dashboard/device, /device/:serialNumber, /device-delete, /device-add, /device-squared, /devices-all --->
+// -----> /api/devices/device, /device/:serialNumber, /device-delete, /device-add, /device-squared, /devices-all
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/devices', deviceRoutes);

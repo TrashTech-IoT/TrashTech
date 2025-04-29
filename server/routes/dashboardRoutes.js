@@ -4,12 +4,6 @@ const { createDevice, getDeviceInfo, getFillLevelHistory, getFillLevel, getUserD
     getAllDevices, addDeviceConnection, createDeviceWithoutOwner } = require('../controllers/dashboardController'); // Import the getDeviceInfo function
 const { authMiddleware, deviceAuth } = require('../middleware/auth');
 
-// Route to create a new device
-router.post('/device', authMiddleware, createDevice);
-
-// Route to get device information by serial number
-router.get('/device/:serialNumber', authMiddleware, getDeviceInfo);
-
 // Route to get the current fillLevel of a device
 router.get('/device/:serialNumber/fillLevel', authMiddleware, getFillLevel);
 
@@ -18,13 +12,5 @@ router.get('/device/:serialNumber/fillLevelHistory', authMiddleware, getFillLeve
 
 // Route to get all devices for the authenticated user
 router.get('/devices', authMiddleware, getUserDevices);
-
-router.delete('/device-delete', authMiddleware, deleteDevice);
-
-router.patch('/device-add', authMiddleware, addDeviceConnection);
-
-router.post('/device-squared', deviceAuth, createDeviceWithoutOwner);
-
-router.get('/devices-all', authMiddleware, getAllDevices);
 
 module.exports = router;

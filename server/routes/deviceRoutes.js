@@ -1,7 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { authMiddleware } = require('../middleware/auth');
 const Device = require('../models/Device');
+const { createDevice, getDeviceInfo, deleteDevice, getAllDevices, addDeviceConnection,
+  createDeviceWithoutOwner } = require('../controllers/deviceController');
+const { authMiddleware, deviceAuth } = require('../middleware/auth');
+
+// Route to create a new device
+router.post('/device', authMiddleware, createDevice);
+
+// Route to get device information by serial number
+router.get('/device/:serialNumber', authMiddleware, getDeviceInfo);
+
+router.delete('/device-delete', authMiddleware, deleteDevice);
+
+router.patch('/device-add', authMiddleware, addDeviceConnection);
+
+router.post('/device-squared', deviceAuth, createDeviceWithoutOwner);
+
+router.get('/devices-all', authMiddleware, getAllDevices);
 
 // GET /api/devices - Отримати всі пристрої (тільки для авторизованих користувачів)
 router.get('/', authMiddleware, async (req, res) => {
