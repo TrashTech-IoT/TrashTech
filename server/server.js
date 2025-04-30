@@ -40,16 +40,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-if (process.env.NODE_ENV == 'production') {
-  // Віддаємо зібраний React
-  const clientBuildPath = path.join(__dirname, '../client/dist');
-  app.use(express.static(clientBuildPath));
+// Віддаємо зібраний React
+const clientBuildPath = path.join(__dirname, '../client/dist');
+app.use(express.static(clientBuildPath));
 
-  // на всі інші запити — index.html
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-}
+// на всі інші запити — index.html
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
 
 // Запуск перевірки статусу пристроїв
 if (process.env.NODE_ENV !== 'test') {
