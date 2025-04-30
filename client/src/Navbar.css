@@ -9,10 +9,10 @@ nav {
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  position: fixed; /* Фіксоване позиціонування */
+  position: fixed; 
   top: 0;
   left: 0;
-  height: 60px; /* Висота навбару */
+  height: 60px;
 }
 
 .navbar-content {
@@ -21,7 +21,7 @@ nav {
   align-items: center;
   width: 80%;
   margin: 0 auto;
-
+  position: relative;
 }
 
 nav a {
@@ -31,75 +31,86 @@ nav a {
 }
 
 .line {
-  display: flex; /* Використання flexbox */
-  flex-direction: row; /* Розташування елементів в один рядок */
-  justify-content: space-between; /* Розподіл елементів по ширині */
-  align-items: center; /* Вирівнювання по вертикалі */
-  gap: 1px; /* Відступи між елементами */
-  width: 100%; /* Ширина блоку */
-    
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+}
 
+.burger-icon {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  z-index: 1001;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+.desktop {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 @media (max-width: 768px) {
-  nav {
-    flex-direction: column; /* Вертикальне розташування */
-    align-items: flex-start;
-    justify-content: center;
-    padding: 5px auto;
-    height: auto; /* Автоматична висота для мобільних */
-    
+  .navbar-content {
+    justify-content: space-between;
+    width: 90%;
+  }
+  
+  .desktop {
+    display: none;
   }
 
-  .navbar-content {
+  .burger-icon {
+    display: block;
+    order: 3;
+  }
+
+  .navbar-logo {
+    order: 1;
+  }
+
+  .user-greeting {
+    order: 2;
+    margin-right: auto;
+    margin-left: 20px;
+  }
+
+  /* Мобільне меню */
+  .mobile-menu {
+    display: none;
+  }
+
+  /* Коли клас open додається — показуємо меню */
+  .mobile-menu.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 200px;
+    background-color: #6059f7;
+    padding: 20px;
+    box-shadow: -2px 2px 10px rgba(0,0,0,0.2);
+    transform: translateY(0);
+    z-index: 1000;
+  }
+
+  .nav-links {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
-    gap: 5px; /* Відступи між елементами */
-    width: 80%;
-    margin: 0 auto;
   }
 
-  nav a {
-    margin-left: 0; /* Вирівнювання посилань */
-    margin-bottom: 10px;
-    font-size: 16px; /* Зменшення розміру шрифту */
-  }
-
-  .line{
-    flex-direction: column; /* Вертикальне розташування */
-    align-items: flex;
-    justify-content: center;
-    gap: 5px; /* Відступи між елементами */
-    width: 80%;
-    margin: 0 auto;
-  }
-
-}
-
-@media (max-width: 480px) {
-  nav {
-    padding: 8px; /* Зменшено внутрішні відступи */
-  }
-
-  .navbar-content {
-    width: 80%;
-    margin: 0 auto;
-    gap: 8px; /* Зменшено відступи між елементами */
-  }
-
-  nav a {
-    font-size: 14px; /* Ще менший розмір шрифту */
-  }
-
-  .line{
-    flex-direction: column; /* Вертикальне розташування */
-    align-items: flex ;
-    justify-content: center;
-    gap: 5px; /* Відступи між елементами */
-    width: 80%;
-    margin: 0 auto;
+  .nav-links a {
+    margin: 10px 0;
+    width: 100%;
+    text-align: left;
   }
 }
-
-
